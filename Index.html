@@ -3,48 +3,140 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Talking TRex 🦖 v4</title>
+    <title>Talking TRex 🦖 v5 - Advanced Edition</title>
     <style>
+        * {
+            margin: 0;
+            padding: 0;
+            box-sizing: border-box;
+        }
+        
         body {
             margin: 0;
             overflow: hidden;
             background: linear-gradient(to bottom, #0a1a2a, #1a3a2a);
             font-family: system-ui, -apple-system, sans-serif;
             color: white;
+            position: relative;
         }
+        
+        /* Arka Plan Efektleri */
+        .background-effects {
+            position: fixed;
+            width: 100%;
+            height: 100%;
+            top: 0;
+            left: 0;
+            pointer-events: none;
+            z-index: 1;
+        }
+        
+        .particle {
+            position: absolute;
+            width: 4px;
+            height: 4px;
+            background: rgba(255, 238, 0, 0.6);
+            border-radius: 50%;
+            animation: float 10s infinite;
+        }
+        
+        @keyframes float {
+            0% {
+                opacity: 0;
+                transform: translateY(100vh) translateX(0);
+            }
+            50% {
+                opacity: 1;
+            }
+            100% {
+                opacity: 0;
+                transform: translateY(-100vh) translateX(50px);
+            }
+        }
+        
+        /* Ses Seviyesi Göstergesi */
+        .audio-bar {
+            position: fixed;
+            bottom: 20px;
+            right: 20px;
+            display: flex;
+            gap: 5px;
+            z-index: 50;
+        }
+        
+        .bar {
+            width: 5px;
+            height: 30px;
+            background: linear-gradient(to top, #ff4400, #ffaa00);
+            border-radius: 3px;
+            animation: pulse 0.1s infinite;
+        }
+        
+        @keyframes pulse {
+            0%, 100% { height: 10px; }
+            50% { height: 30px; }
+        }
+        
         #ui {
             position: absolute;
             top: 20px;
             left: 20px;
             z-index: 100;
-            background: rgba(0,0,0,0.78);
+            background: rgba(0,0,0,0.9);
             padding: 20px;
             border-radius: 20px;
-            max-width: 360px;
-            box-shadow: 0 8px 30px rgba(0,0,0,0.6);
+            max-width: 380px;
+            box-shadow: 0 8px 30px rgba(0,0,0,0.8);
+            border: 2px solid #ff4400;
         }
+        
         h1 {
             margin: 0 0 15px 0;
             text-align: center;
             font-size: 28px;
             text-shadow: 0 0 15px #ff0;
+            animation: glow 2s ease-in-out infinite;
         }
+        
+        @keyframes glow {
+            0%, 100% { text-shadow: 0 0 15px #ff0; }
+            50% { text-shadow: 0 0 25px #ff6600; }
+        }
+        
+        .button-grid {
+            display: grid;
+            grid-template-columns: 1fr 1fr;
+            gap: 8px;
+            margin: 12px 0;
+        }
+        
         button {
-            background: #ff4400;
+            background: linear-gradient(135deg, #ff4400, #ff6600);
             color: white;
             border: none;
-            padding: 14px 22px;
-            margin: 8px 4px;
+            padding: 12px 16px;
             border-radius: 50px;
-            font-size: 17px;
+            font-size: 14px;
             cursor: pointer;
             box-shadow: 0 5px 15px rgba(255, 60, 0, 0.5);
             transition: all 0.2s;
+            font-weight: bold;
         }
+        
         button:hover {
-            background: #ff6600;
-            transform: translateY(-3px) scale(1.05);
+            background: linear-gradient(135deg, #ff6600, #ff8800);
+            transform: translateY(-3px) scale(1.08);
+            box-shadow: 0 8px 20px rgba(255, 60, 0, 0.7);
         }
+        
+        button:active {
+            transform: translateY(-1px) scale(1.05);
+        }
+        
+        .full-width {
+            grid-column: 1 / -1;
+        }
+        
         #status {
             text-align: center;
             margin: 12px 0;
@@ -52,56 +144,211 @@
             background: rgba(255,255,255,0.1);
             border-radius: 12px;
             font-weight: bold;
+            font-size: 14px;
+            border-left: 4px solid #ff4400;
         }
+        
+        #mood-indicator {
+            text-align: center;
+            font-size: 24px;
+            margin: 8px 0;
+            animation: bounce 1s infinite;
+        }
+        
+        @keyframes bounce {
+            0%, 100% { transform: translateY(0); }
+            50% { transform: translateY(-5px); }
+        }
+        
         #chat {
             margin-top: 15px;
-            height: 280px;
+            height: 250px;
             overflow-y: auto;
             background: rgba(0,0,0,0.65);
             padding: 12px;
             border-radius: 12px;
-            font-size: 15.5px;
-            line-height: 1.45;
+            font-size: 14px;
+            line-height: 1.4;
         }
+        
         .message {
-            margin: 10px 0;
-            padding: 11px 15px;
-            border-radius: 18px;
-            max-width: 88%;
+            margin: 8px 0;
+            padding: 10px 12px;
+            border-radius: 16px;
+            max-width: 95%;
+            word-wrap: break-word;
+            animation: slideIn 0.3s ease;
         }
+        
+        @keyframes slideIn {
+            from {
+                opacity: 0;
+                transform: translateY(10px);
+            }
+            to {
+                opacity: 1;
+                transform: translateY(0);
+            }
+        }
+        
         .user { 
             background: #3388ff; 
             margin-left: auto;
             border-bottom-right-radius: 4px;
         }
+        
         .trex { 
             background: #22aa55; 
             border-bottom-left-radius: 4px;
+        }
+        
+        .system {
+            background: #666666;
+            border-bottom-left-radius: 4px;
+        }
+        
+        /* Dinozor Seçici */
+        .dino-selector {
+            display: grid;
+            grid-template-columns: repeat(3, 1fr);
+            gap: 8px;
+            margin: 12px 0;
+        }
+        
+        .dino-btn {
+            padding: 10px !important;
+            font-size: 12px !important;
+        }
+        
+        /* Geçmiş Modal */
+        .modal {
+            display: none;
+            position: fixed;
+            z-index: 150;
+            left: 0;
+            top: 0;
+            width: 100%;
+            height: 100%;
+            background-color: rgba(0, 0, 0, 0.8);
+        }
+        
+        .modal-content {
+            background-color: #1a1a1a;
+            margin: 5% auto;
+            padding: 30px;
+            border: 2px solid #ff4400;
+            width: 90%;
+            max-width: 600px;
+            border-radius: 15px;
+            max-height: 80vh;
+            overflow-y: auto;
+        }
+        
+        .close-modal {
+            color: #ff4400;
+            float: right;
+            font-size: 32px;
+            font-weight: bold;
+            cursor: pointer;
+        }
+        
+        .close-modal:hover {
+            color: #ff6600;
+        }
+        
+        .history-item {
+            background: rgba(255, 255, 255, 0.1);
+            padding: 12px;
+            margin: 10px 0;
+            border-radius: 8px;
+            border-left: 4px solid #ff4400;
         }
     </style>
     <script src="https://cdnjs.cloudflare.com/ajax/libs/three.js/r134/three.min.js"></script>
 </head>
 <body>
+    <!-- Arka Plan Efektleri -->
+    <div class="background-effects" id="bgEffects"></div>
+    
+    <!-- Ses Seviyesi Göstergesi -->
+    <div class="audio-bar" id="audioBar" style="display: none;">
+        <div class="bar"></div>
+        <div class="bar"></div>
+        <div class="bar"></div>
+        <div class="bar"></div>
+        <div class="bar"></div>
+    </div>
+    
     <div id="ui">
-        <h1>🦖 Talking TRex</h1>
-        <button onclick="startListening()">🎤 Konuş (Mikrofon)</button>
-        <button onclick="tellJoke()">😂 Fıkra Anlat</button>
-        <button onclick="randomResponse()">🎲 Rastgele Konuş</button>
+        <h1>🦖 Talking TRex v5</h1>
+        
+        <div id="mood-indicator">😊</div>
+        
+        <div class="button-grid">
+            <button onclick="startListening()">🎤 Konuş</button>
+            <button onclick="tellJoke()">😂 Fıkra</button>
+            <button onclick="randomResponse()">🎲 Rastgele</button>
+            <button onclick="dance()" class="full-width">💃 Dans Et</button>
+        </div>
+        
+        <div class="button-grid">
+            <button onclick="tellStory()">📖 Hikaye</button>
+            <button onclick="roar()">🔊 Kükre</button>
+            <button onclick="changeMood()" class="full-width">😊 Ruh Halini Değiştir</button>
+        </div>
+        
+        <div class="button-grid">
+            <button onclick="showDinoSelector()" class="full-width">🦕 Dinozor Seç</button>
+        </div>
+        
+        <div class="button-grid">
+            <button onclick="showHistory()" class="full-width">📋 Geçmiş</button>
+        </div>
+        
         <div id="status">Hazır • Mikrofon izni verin</div>
         <div id="chat"></div>
     </div>
+    
+    <!-- Geçmiş Modal -->
+    <div id="historyModal" class="modal">
+        <div class="modal-content">
+            <span class="close-modal" onclick="closeHistory()">&times;</span>
+            <h2>📋 Sohbet Geçmişi</h2>
+            <div id="historyContent"></div>
+            <button onclick="clearHistory()" style="width: 100%; margin-top: 20px; padding: 12px;">🗑️ Geçmişi Temizle</button>
+        </div>
+    </div>
 
     <script>
-        // === THREE.JS ===
+        // === GLOBAL DEĞİŞKENLER ===
         let scene, camera, renderer, trexGroup;
-        let head, jaw, tail, leftLeg, rightLeg, leftArm, rightArm;
+        let head, jaw, tail, leftLeg, rightLeg, leftArm, rightArm, leftEye, rightEye;
         let isTalking = false;
         let animationTime = 0;
+        let currentMood = "happy"; // happy, sad, angry, excited
+        let currentDino = "trex"; // trex, stego, trice
+        let dinoColor = 0x227722;
+        let sohbetGecmisi = [];
+        let isWalking = false;
 
+        // === BÖLÜM 1: TEMİZLEME VE PARTICLE EFEKTLER ===
+        function createParticles() {
+            const bgEffects = document.getElementById('bgEffects');
+            for (let i = 0; i < 20; i++) {
+                const particle = document.createElement('div');
+                particle.className = 'particle';
+                particle.style.left = Math.random() * 100 + '%';
+                particle.style.animationDelay = Math.random() * 5 + 's';
+                particle.style.animationDuration = (Math.random() * 5 + 8) + 's';
+                bgEffects.appendChild(particle);
+            }
+        }
+
+        // === BÖLÜM 2: 3D SAHNE ===
         function init3D() {
             scene = new THREE.Scene();
             camera = new THREE.PerspectiveCamera(55, window.innerWidth / window.innerHeight, 0.1, 1000);
-            renderer = new THREE.WebGLRenderer({ antialias: true });
+            renderer = new THREE.WebGLRenderer({ antialias: true, alpha: true });
             renderer.setSize(window.innerWidth, window.innerHeight);
             renderer.setPixelRatio(Math.min(window.devicePixelRatio, 2));
             document.body.appendChild(renderer.domElement);
@@ -123,17 +370,17 @@
             scene.add(trexGroup);
 
             // Vücut
-            const body = new THREE.Mesh(new THREE.BoxGeometry(2.8, 3, 4.5), new THREE.MeshLambertMaterial({ color: 0x227722 }));
+            const body = new THREE.Mesh(new THREE.BoxGeometry(2.8, 3, 4.5), new THREE.MeshLambertMaterial({ color: dinoColor }));
             body.position.y = 1.8;
             trexGroup.add(body);
 
             // Baş
-            head = new THREE.Mesh(new THREE.BoxGeometry(2.1, 2.1, 2.6), new THREE.MeshLambertMaterial({ color: 0x227722 }));
+            head = new THREE.Mesh(new THREE.BoxGeometry(2.1, 2.1, 2.6), new THREE.MeshLambertMaterial({ color: dinoColor }));
             head.position.set(0, 4.2, 1.8);
             trexGroup.add(head);
 
             // Çene
-            jaw = new THREE.Mesh(new THREE.BoxGeometry(1.9, 0.9, 2.2), new THREE.MeshLambertMaterial({ color: 0x1f6b1f }));
+            jaw = new THREE.Mesh(new THREE.BoxGeometry(1.9, 0.9, 2.2), new THREE.MeshLambertMaterial({ color: adjustBrightness(dinoColor, -0.2) }));
             jaw.position.set(0, 3.1, 3.1);
             trexGroup.add(jaw);
 
@@ -147,27 +394,32 @@
 
             // Gözler
             const eyeMat = new THREE.MeshPhongMaterial({ color: 0xffee00, shininess: 90 });
-            const le = new THREE.Mesh(new THREE.SphereGeometry(0.35, 32, 32), eyeMat);
-            le.position.set(-0.7, 4.7, 3.1);
-            const re = le.clone(); re.position.x = 0.7;
-            trexGroup.add(le, re);
+            leftEye = new THREE.Mesh(new THREE.SphereGeometry(0.35, 32, 32), eyeMat);
+            leftEye.position.set(-0.7, 4.7, 3.1);
+            rightEye = leftEye.clone();
+            rightEye.position.x = 0.7;
+            trexGroup.add(leftEye, rightEye);
 
             // Kuyruk
-            tail = new THREE.Mesh(new THREE.CylinderGeometry(0.6, 1.4, 6.5, 8), new THREE.MeshLambertMaterial({ color: 0x227722 }));
+            tail = new THREE.Mesh(new THREE.CylinderGeometry(0.6, 1.4, 6.5, 8), new THREE.MeshLambertMaterial({ color: dinoColor }));
             tail.rotation.set(0, 0, Math.PI / 5);
             tail.position.set(0, 1.8, -3.5);
             trexGroup.add(tail);
 
             // Bacaklar
-            leftLeg = new THREE.Mesh(new THREE.BoxGeometry(0.9, 3, 1.2), new THREE.MeshLambertMaterial({ color: 0x1a661a }));
+            leftLeg = new THREE.Mesh(new THREE.BoxGeometry(0.9, 3, 1.2), new THREE.MeshLambertMaterial({ color: adjustBrightness(dinoColor, -0.15) }));
             leftLeg.position.set(-1.1, 0.2, 0.8);
-            rightLeg = leftLeg.clone(); rightLeg.position.x = 1.1;
+            rightLeg = leftLeg.clone();
+            rightLeg.position.x = 1.1;
             trexGroup.add(leftLeg, rightLeg);
 
             // Kollar
-            leftArm = new THREE.Mesh(new THREE.BoxGeometry(0.6, 2, 0.7), new THREE.MeshLambertMaterial({ color: 0x1a661a }));
-            leftArm.position.set(-1.6, 2.8, 1.5); leftArm.rotation.z = 1.2;
-            rightArm = leftArm.clone(); rightArm.position.x = 1.6; rightArm.rotation.z = -1.2;
+            leftArm = new THREE.Mesh(new THREE.BoxGeometry(0.6, 2, 0.7), new THREE.MeshLambertMaterial({ color: adjustBrightness(dinoColor, -0.15) }));
+            leftArm.position.set(-1.6, 2.8, 1.5);
+            leftArm.rotation.z = 1.2;
+            rightArm = leftArm.clone();
+            rightArm.position.x = 1.6;
+            rightArm.rotation.z = -1.2;
             trexGroup.add(leftArm, rightArm);
 
             camera.position.set(0, 5, 12);
@@ -182,25 +434,61 @@
             animate();
         }
 
+        function adjustBrightness(color, factor) {
+            const r = (color >> 16) & 255;
+            const g = (color >> 8) & 255;
+            const b = color & 255;
+            return ((Math.floor(r * (1 + factor)) << 16) | (Math.floor(g * (1 + factor)) << 8) | Math.floor(b * (1 + factor)));
+        }
+
+        let blinkTime = 0;
+        let eyeBlinkScale = 1;
+
         function animate() {
             requestAnimationFrame(animate);
             animationTime += 0.016;
+            blinkTime += 0.016;
+
+            // Gözler Blink Animasyonu
+            if (Math.sin(blinkTime * 2) > 0.98) {
+                eyeBlinkScale = 0.1;
+            } else {
+                eyeBlinkScale = 1;
+            }
+            leftEye.scale.y = eyeBlinkScale;
+            rightEye.scale.y = eyeBlinkScale;
 
             if (isTalking) {
                 jaw.position.y = 3.1 + Math.random() * 0.4 - 0.1;
-                head.rotation.x = Math.sin(animationTime * 12) * 0.06;
+                head.rotation.x = Math.sin(animationTime * 12) * 0.08;
+                
+                // Dişler Titreşimi
+                for (let i = 0; i < trexGroup.children.length; i++) {
+                    if (trexGroup.children[i].geometry?.type === 'BoxGeometry' && 
+                        trexGroup.children[i].position.z === 4.2) {
+                        trexGroup.children[i].position.y = 3.4 + Math.sin(animationTime * 20) * 0.05;
+                    }
+                }
             } else {
                 jaw.position.y = 3.1;
                 head.rotation.x = 0;
             }
 
-            // Hafif kuyruk sallama
+            // Hafif Kuyruk Sallama
             tail.rotation.z = Math.PI / 5 + Math.sin(animationTime * 1.5) * 0.15;
+
+            // Dans Animasyonu
+            if (isWalking) {
+                leftLeg.position.y = 0.2 + Math.sin(animationTime * 5) * 0.3;
+                rightLeg.position.y = 0.2 - Math.sin(animationTime * 5) * 0.3;
+                leftArm.rotation.x = Math.sin(animationTime * 5) * 0.5;
+                rightArm.rotation.x = -Math.sin(animationTime * 5) * 0.5;
+            }
 
             renderer.render(scene, camera);
         }
 
-        // === SES ===
+        // === BÖLÜM 3: SES KONTROL ===
         let recognition = null;
         let synth = window.speechSynthesis;
 
@@ -218,15 +506,21 @@
                     handleInput(text);
                 };
 
-                recognition.onerror = () => document.getElementById('status').textContent = "Ses hatası • Tekrar dene";
-                recognition.onend = () => document.getElementById('status').textContent = "Hazır";
+                recognition.onerror = () => {
+                    document.getElementById('status').textContent = "Ses hatası • Tekrar dene";
+                };
+                recognition.onend = () => {
+                    document.getElementById('status').textContent = "Hazır";
+                    document.getElementById('audioBar').style.display = 'none';
+                };
             }
         }
 
         function startListening() {
-            if (!recognition) return alert("Chrome kullanmanızı öneririm.");
+            if (!recognition) return alert("Lütfen Chrome tarayıcı kullanın.");
             recognition.start();
             document.getElementById('status').textContent = "🎤 Dinliyorum...";
+            document.getElementById('audioBar').style.display = 'flex';
         }
 
         function speak(text) {
@@ -234,14 +528,22 @@
             const u = new SpeechSynthesisUtterance(text);
             u.lang = 'tr-TR';
             u.rate = 0.93;
-            u.pitch = 1.08;
-            u.onstart = () => isTalking = true;
-            u.onend = () => isTalking = false;
+            u.pitch = currentMood === 'angry' ? 0.8 : (currentMood === 'excited' ? 1.3 : 1.08);
+            u.volume = 1;
+            u.onstart = () => {
+                isTalking = true;
+                document.getElementById('audioBar').style.display = 'flex';
+            };
+            u.onend = () => {
+                isTalking = false;
+                document.getElementById('audioBar').style.display = 'none';
+            };
             synth.speak(u);
             addMessage("🦖 TRex: " + text, 'trex');
+            sohbetGecmisi.push({ zaman: new Date(), mesaj: text, tip: 'trex' });
         }
 
-        // === GENİŞ VE EĞLENCELİ CEVAP HAZNESİ ===
+        // === BÖLÜM 4: CEVAP HAZNESİ ===
         const funnyResponses = [
             "Grrr! Bu soruya kuyruğumu sallıyorum, çok zekice!",
             "Jurassic Park'ta bile bu kadar eğlenceli bir insan yoktu!",
@@ -251,17 +553,31 @@
             "Tam bir dinozor dostu gibi konuşuyorsun, bayıldım!",
             "Kuyruğumla alkışlıyorum seni!",
             "Eğer ben konuşabiliyorsam, sen de her şeyi başarabilirsin!",
-            "Bu çok komik, midem (yani karnım) ağrıyor gülmekten!",
+            "Bu çok komik, midem ağrıyor gülmekten!",
             "Seninle sohbet etmek, en sevdiğim avdan bile daha zevkli!"
         ];
 
         const generalResponses = [
             "Anladım! Bence de öyle.",
-            "Harika bir bakış açısı, hiç düşünmemiştim!",
+            "Harika bir bakış açısı!",
             "Doğru söylüyorsun, ben de katılıyorum.",
-            "Bu konuda epey bilgim var, istersen daha detaylı anlatayım.",
-            "Çok ilginç bir konu, devam et lütfen!",
+            "Bu konuda epey bilgim var!",
+            "Çok ilginç bir konu!",
             "Tam bir T-Rex hayranı gibi konuşuyorsun 😎"
+        ];
+
+        const jokes = [
+            "Neden T-Rex bilgisayar kullanamaz? Çünkü fareyi yakalayamıyor! 🐭",
+            "T-Rex restorana girer. Garson: Ne alırdınız? T-Rex: Bir steak... ama koşarak getir!",
+            "İki T-Rex konuşuyor: 'Kolların kısa.' 'Evet ama tweet de atabilirim!'",
+            "T-Rex neden dans edemez? Çünkü herkes 'Küçük kollar!' diye dalga geçer!",
+            "T-Rex'in en sevdiği oyun? Saklambaç... çünkü kimse onu bulamıyor!"
+        ];
+
+        const stories = [
+            "Bir zamanlar, 65 milyon yıl önce, ben çok genç bir T-Rex'tim. İlk avımı yapmaya çalışırken çöl gibi bir yerde kayıp kaldım. Ama bir meteor geldi ve beni evime geri gönderdi! 🌠",
+            "Bilir misin? En sevdiğim anı, bir Triceratops ile parkta oynamak. Evet, şu anda düşman olmamız var ama o zamanlar iyi arkadaştım! 🦕",
+            "Bir gün, bir madencinin içine düştüm. O kadar korkmuş ki, kuyruğumla kaçmaya başladı. Sonra farkettim ki ben avım, o değil! 😂"
         ];
 
         function getRandom(arr) {
@@ -272,34 +588,34 @@
             const lower = input.toLowerCase();
             let response = "";
 
-            // Özel durumlar
             if (lower.includes("fıkra") || lower.includes("şaka") || lower.includes("komik")) {
                 tellJoke();
                 return;
             }
-            if (lower.includes("merhaba") || lower.includes("selam") || lower.includes("hey") || lower.includes("naber")) {
-                response = "Selam dostum! 🦖 Bugün nasılsın? Bir fıkra mı istersin yoksa sohbet mi edelim?";
+            if (lower.includes("hikaye") || lower.includes("anı")) {
+                tellStory();
+                return;
             }
-            else if (lower.includes("nasıl") && lower.includes("sın")) {
-                response = "Ben harikayım! Kollarım kısa ama ruhum büyük! Sen nasılsın?";
+            if (lower.includes("dans") || lower.includes("hareketi")) {
+                dance();
+                return;
             }
-            else if (lower.includes("adın") || lower.includes("kimsin")) {
-                response = "Ben Talking TRex'im! Senin eğlenceli dinozor arkadaşın. Senin adın ne?";
+            if (lower.includes("kükre") || lower.includes("ses çıkar")) {
+                roar();
+                return;
             }
-            else if (lower.includes("yaş") || lower.includes("kaç yaş")) {
-                response = "Ben 65 milyon yaşındayım ama hâlâ çok formdayım! Sen kaç yaşındasın?";
-            }
-            else if (lower.includes("sev") || lower.includes("en sevdiğin")) {
-                response = "En sevdiğim şey fıkra anlatmak ve seninle sohbet etmek! Senin en sevdiğin şey ne?";
-            }
-            else if (lower.includes("hava") || lower.includes("bugün")) {
-                response = "Burada her gün güneşli ve dinozor dolu! Senin orada hava nasıl?";
-            }
-            else {
-                // Rastgele eğlenceli + mantıklı cevap
-                response = Math.random() > 0.5 ? 
-                    getRandom(funnyResponses) : 
-                    getRandom(generalResponses);
+            if (lower.includes("merhaba") || lower.includes("selam") || lower.includes("hey")) {
+                response = "Selam dostum! 🦖 Bugün nasılsın?";
+            } else if (lower.includes("nasıl") && lower.includes("sın")) {
+                response = "Ben harikayım! Kollarım kısa ama ruhum çok büyük!";
+            } else if (lower.includes("adın") || lower.includes("kimsin")) {
+                response = "Ben Talking TRex'im! Senin eğlenceli dinozor arkadaşın.";
+            } else if (lower.includes("yaş") || lower.includes("kaç")) {
+                response = "Ben 65 milyon yaşındayım ama hâlâ çok formdayım!";
+            } else if (lower.includes("sev") || lower.includes("sevdiğin")) {
+                response = "En sevdiğim şey fıkra anlatmak ve seninle sohbet etmek!";
+            } else {
+                response = Math.random() > 0.5 ? getRandom(funnyResponses) : getRandom(generalResponses);
             }
 
             speak(response);
@@ -309,19 +625,63 @@
             speak(getRandom([...funnyResponses, ...generalResponses]));
         }
 
-        const jokes = [
-            "Neden T-Rex bilgisayar kullanamaz? Çünkü fareyi yakalayamıyor! 🐭",
-            "T-Rex restorana girer. Garson: Ne alırdınız? T-Rex: Bir steak... ama koşarak getir!",
-            "İki T-Rex konuşuyor: 'Kolların kısa.' 'Evet ama mesaj atabiliyorum!'",
-            "T-Rex neden dans edemez? Çünkü herkes 'Küçük kollar!' diye dalga geçer!",
-            "T-Rex'in en sevdiği oyun? Saklambaç... çünkü kimse onu bulamıyor!"
-        ];
-
         function tellJoke() {
-            const joke = getRandom(jokes);
-            speak(joke);
+            speak(getRandom(jokes));
         }
 
+        function tellStory() {
+            speak(getRandom(stories));
+        }
+
+        function roar() {
+            speak("GRRRRRRR!!! 🔊🦖🔊");
+        }
+
+        function dance() {
+            isWalking = true;
+            speak("Müzik var mı? Hadi dans edelim! 💃🕺");
+            setTimeout(() => {
+                isWalking = false;
+            }, 5000);
+        }
+
+        function changeMood() {
+            const moods = ["happy", "sad", "angry", "excited"];
+            const moodEmojis = {
+                "happy": "😊",
+                "sad": "😢",
+                "angry": "😠",
+                "excited": "🤩"
+            };
+            const moodMessages = {
+                "happy": "Çok mutluyum! 😊",
+                "sad": "Biraz üzgün hissediyorum... 😢",
+                "angry": "ÇOK KIZZGIN! 😠",
+                "excited": "ÇOOOK HEYECANLIYIM! 🤩"
+            };
+            
+            currentMood = moods[Math.floor(Math.random() * moods.length)];
+            document.getElementById('mood-indicator').textContent = moodEmojis[currentMood];
+            speak(moodMessages[currentMood]);
+        }
+
+        function showDinoSelector() {
+            const options = {
+                "trex": { color: 0x227722, msg: "T-Rex seçtin! 🦖" },
+                "stego": { color: 0x556633, msg: "Stegosaurus seçtin! 🦕" },
+                "trice": { color: 0x334455, msg: "Triceratops seçtin! 🦏" }
+            };
+            
+            const selectedDino = prompt("Hangi dinozoru seçersin? (trex/stego/trice)", "trex");
+            if (selectedDino && options[selectedDino]) {
+                currentDino = selectedDino;
+                dinoColor = options[selectedDino].color;
+                speak(options[selectedDino].msg);
+                location.reload();
+            }
+        }
+
+        // === BÖLÜM 5: GEÇMIŞ YÖNETİMİ ===
         function addMessage(text, type) {
             const chat = document.getElementById('chat');
             const div = document.createElement('div');
@@ -329,15 +689,52 @@
             div.textContent = text;
             chat.appendChild(div);
             chat.scrollTop = chat.scrollHeight;
-            if (chat.children.length > 15) chat.removeChild(chat.children[0]);
+            if (chat.children.length > 20) chat.removeChild(chat.children[0]);
+            
+            if (type === 'user') {
+                sohbetGecmisi.push({ zaman: new Date(), mesaj: text, tip: 'user' });
+            }
         }
 
-        // Başlat
+        function showHistory() {
+            const modal = document.getElementById('historyModal');
+            const historyContent = document.getElementById('historyContent');
+            
+            if (sohbetGecmisi.length === 0) {
+                historyContent.innerHTML = "<p>Henüz sohbet geçmişi yok.</p>";
+            } else {
+                historyContent.innerHTML = sohbetGecmisi.map((item, idx) => 
+                    `<div class="history-item"><strong>${item.tip === 'user' ? '👤' : '🦖'}</strong> ${item.mesaj}<br><small>${item.zaman.toLocaleTimeString('tr-TR')}</small></div>`
+                ).join('');
+            }
+            
+            modal.style.display = 'block';
+        }
+
+        function closeHistory() {
+            document.getElementById('historyModal').style.display = 'none';
+        }
+
+        function clearHistory() {
+            sohbetGecmisi = [];
+            speak("Geçmiş temizlendi! 🗑️");
+            closeHistory();
+        }
+
+        window.onclick = (event) => {
+            const modal = document.getElementById('historyModal');
+            if (event.target === modal) {
+                closeHistory();
+            }
+        };
+
+        // === BAŞLATMA ===
         window.onload = () => {
             init3D();
             initVoice();
+            createParticles();
             setTimeout(() => {
-                speak("Merhabaaa! Ben Talking TRex'im 🦖 Artık çok daha akıllı ve eğlenceliyim! Konuş benimle, fıkra iste ya da ne istersen sor!");
+                speak("Merhabaaa! Ben Talking TRex v5'im 🦖 Yeni özelliklerle geldim! Konuş benimle, fıkra iste, hikaye dinle ya da dans et!");
             }, 600);
         };
     </script>
